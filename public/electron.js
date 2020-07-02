@@ -47,38 +47,38 @@ function createWindow() {
 				configWindow.isVisible() ? configWindow.hide() : configWindow.show();
 			},
 		},
-		{
-			label: 'Fechar',
-			click() {
-				dialog.showMessageBox(
-					win,
-					{
-						type: 'question',
-						title: 'Atenção!',
-						message: 'Tem certeza que deseja fechar o aplicativo de sincronização com Oruc?',
-						buttons: ['Sim', 'Não'],
-						defaultId: 1,
-						noLink: true,
-					},
-					(resp) => {
-						if (resp == 0) {
-							find('port', 3000)
-								.then(function (list) {
-									console.log('List: ', list);
-									if (list[0] != null) {
-										console.log('PID: ', list[0].pid);
-										process.kill(list[0].pid, 'SIGHUP');
-										// app.quit();
-									}
-								})
-								.catch((e) => {
-									console.log(e.stack || e);
-								});
-						}
-					}
-				);
-			},
-		},
+		// {
+		// 	label: 'Fechar',
+		// 	click() {
+		// 		dialog.showMessageBox(
+		// 			win,
+		// 			{
+		// 				type: 'question',
+		// 				title: 'Atenção!',
+		// 				message: 'Tem certeza que deseja fechar o aplicativo de sincronização com Oruc?',
+		// 				buttons: ['Sim', 'Não'],
+		// 				defaultId: 1,
+		// 				noLink: true,
+		// 			},
+		// 			(resp) => {
+		// 				if (resp == 0) {
+		// 					find('port', 3000)
+		// 						.then(function (list) {
+		// 							console.log('List: ', list);
+		// 							if (list[0] != null) {
+		// 								console.log('PID: ', list[0].pid);
+		// 								process.kill(list[0].pid, 'SIGHUP');
+		// 								// app.quit();
+		// 							}
+		// 						})
+		// 						.catch((e) => {
+		// 							console.log(e.stack || e);
+		// 						});
+		// 				}
+		// 			}
+		// 		);
+		// 	},
+		// },
 		{
 			label: 'Sobre',
 			click(item, focusedWindow) {
@@ -117,9 +117,9 @@ function createWindow() {
 
 	mainWindow.setMenu(null);
 	mainWindow.loadURL(isDev ? 'http://localhost:3000' : `file://${path.join(__dirname, '../build/index.html')}`);
-	mainWindow.on('closed', (e) => {
+	mainWindow.on('close', (e) => {
 		e.preventDefault();
-		imageWindow.hide();
+		mainWindow.hide();
 		// mainWindow = null;
 	});
 	if (isDev) mainWindow.webContents.openDevTools();
@@ -153,6 +153,7 @@ function createWindow() {
 			nodeIntegration: true,
 			enableRemoteModule: true,
 		},
+		parent: win,
 	});
 
 	configWindow.setMenu(null);
@@ -170,6 +171,7 @@ function createWindow() {
 			nodeIntegration: true,
 			enableRemoteModule: true,
 		},
+		parent: win,
 	});
 
 	aboutWindow.setMenu(null);
@@ -194,11 +196,11 @@ app.on('before-quit', (e) => {
 		});
 });
 
-app.on('window-all-closed', () => {
-	if (process.platform !== 'darwin') {
-		app.quit();
-	}
-});
+// app.on('window-all-closed', () => {
+// 	if (process.platform !== 'darwin') {
+// 		app.quit();
+// 	}
+// });
 
 app.on('activate', () => {
 	if (mainWindow === null) {
